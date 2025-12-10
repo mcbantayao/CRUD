@@ -5,7 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tailwind CRUD App</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -38,9 +37,8 @@
     </div>
   </div>
 
-  <!-- Modal Background -->
+  <!-- Modal -->
   <div id="modalBg" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
-    <!-- Modal Box -->
     <div class="bg-white w-96 p-6 rounded-lg shadow-xl">
       <h2 id="modalTitle" class="text-xl font-bold mb-4"></h2>
 
@@ -55,20 +53,25 @@
 
       <div class="flex justify-end gap-2 mt-4">
         <button onclick="closeModal()" class="px-4 py-2 border rounded-lg">Cancel</button>
-        <button id="modalActionBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"></button>
+        <button id="modalActionBtn"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"></button>
       </div>
     </div>
   </div>
 
   <script>
-    const API = "https://hbsv2zic14.execute-api.ap-southeast-1.amazonaws.com"; // example: https://abcd1234.execute-api.ap-southeast-1.amazonaws.com/prod
+    const API = "https://x0f9v8cst6.execute-api.ap-southeast-1.amazonaws.com";
 
-    // Load all items on page load
+    /* ================================
+       LOAD ITEMS
+    ==================================*/
     document.addEventListener("DOMContentLoaded", loadItems);
 
     async function loadItems() {
       const res = await fetch(`${API}/items`);
-      const items = await res.json();
+      const data = await res.json();
+
+      const items = data.items || [];   // <-- fixed to match Lambda output
 
       const table = document.getElementById("itemsTable");
       table.innerHTML = "";
@@ -90,7 +93,9 @@
       });
     }
 
-    // ========== MODAL ==========
+    /* ================================
+       MODAL HANDLING
+    ==================================*/
 
     function openAddModal() {
       document.getElementById("modalTitle").innerText = "Add Item";
@@ -120,30 +125,35 @@
       document.getElementById("modalBg").classList.add("hidden");
     }
 
-    // ========== CRUD FUNCTIONS ==========
+    /* ================================
+       CRUD
+    ==================================*/
 
-async function saveItem() {
-  const item = readForm();
+    async function saveItem() {
+      const item = readForm();
 
-  await fetch(`${API}/items/${item.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(item)
-  });
+      await fetch(`${API}/items`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(item)
+      });
 
-  closeModal();
-  loadItems();
-}
+      closeModal();
+      loadItems();
+    }
 
-async function updateItem() {
-  const item = readForm();
+    async function updateItem() {
+      const item = readForm();
 
-  await fetch(`${API}/items/${item.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(item)
-  });
-}
+      await fetch(`${API}/items/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(item)
+      });
+
+      closeModal();   // <-- FIXED (you forgot this)
+      loadItems();
+    }
 
     async function deleteItem(id) {
       if (!confirm("Delete this item?")) return;
@@ -166,11 +176,3 @@ async function updateItem() {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
