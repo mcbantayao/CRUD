@@ -122,29 +122,28 @@
 
     // ========== CRUD FUNCTIONS ==========
 
-    async function saveItem() {
-      const item = readForm();
-      await fetch(`${API}/items`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(item)
-      });
+async function saveItem() {
+  const item = readForm();
 
-      closeModal();
-      loadItems();
-    }
+  await fetch(`${API}/items/${item.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(item)
+  });
 
-    async function updateItem() {
-      const item = readForm();
-      await fetch(`${API}/items`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(item)
-      });
+  closeModal();
+  loadItems();
+}
 
-      closeModal();
-      loadItems();
-    }
+async function updateItem() {
+  const item = readForm();
+
+  await fetch(`${API}/items/${item.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(item)
+  });
+}
 
     async function deleteItem(id) {
       if (!confirm("Delete this item?")) return;
@@ -167,6 +166,7 @@
 
 </body>
 </html>
+
 
 
 
